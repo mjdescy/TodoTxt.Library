@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace TodoTxtWin.Library
 {
     /// <summary>
     /// A FileBasedTaskList is a TaskList with methods for saving to a text file and monitoring the file for changes. 
     /// </summary>
-    public class FileBasedTaskList : TaskList
+    public class FileBasedTaskList : TaskListWithMetadata
     {
         #region Static Properties
 
@@ -70,7 +66,16 @@ namespace TodoTxtWin.Library
                 return;
             }
 
+            bool autoSaveSetting = this.AutoSave;
+            this.AutoSave = false;
+            DisableFileChangeObserver();
             this.Clear();
+            if (this.ReloadFileWhenFileModifiedExternally)
+            {
+                EnableFileChangeObserver();
+            }
+            this.AutoSave = autoSaveSetting;
+
             this.AppendFile(this.FilePath);
         }
 

@@ -1,7 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Collections;
+using System.ComponentModel;
+
 
 namespace TodoTxtWin.Library
 {
@@ -17,7 +20,7 @@ namespace TodoTxtWin.Library
 
         ~ItemsChangedObservableCollection()
         {
-            ClearItems();
+            UnRegisterPropertyChanged(this);
         }
 
         #endregion
@@ -39,8 +42,8 @@ namespace TodoTxtWin.Library
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
-                UnRegisterPropertyChanged((IList)this.Items);
-                RegisterPropertyChanged((IList)this.Items);
+                UnRegisterPropertyChanged(this);
+                RegisterPropertyChanged(this);
             }
             
             base.OnCollectionChanged(e);
@@ -76,7 +79,47 @@ namespace TodoTxtWin.Library
 
         protected virtual void item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        public virtual void ReplaceItem(T itemToReplace, T replacementItem)
+        {
+            var index = this.IndexOf(itemToReplace);
+            this.Items[index] = replacementItem;
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, this.Items[index], replacementItem));
+        }
+
+        public virtual void ReplaceItems(IList<T> itemsToReplace, IList<T> replacementItems)
+        {
+            if (itemsToReplace == null)
+            {
+                throw new ArgumentNullException("itemsToReplace");
+            }
+
+            if (replacementItems == null)
+            {
+                throw new ArgumentNullException("replacementItems");
+            }
+
+            if (itemsToReplace.Count != replacementItems.Count)
+            {
+                throw new OverflowException("itemsToReplace count does not equal replacementItems count");
+            }
+
+            // These lists are to be passed to the OnCollectionChanged event handler.
+            var newItems = new List<T>(replacementItems.Count);
+            var oldItems = new List<T>(itemsToReplace.Count);
+
+            for (int i = 0; i < itemsToReplace.Count; i++)
+            {
+                var index = this.IndexOf((T)itemsToReplace[i]);
+                oldItems.Add(this.Items[index]);
+                this.Items[index] = replacementItems[i];
+                newItems.Add(this.Items[index]);
+            }
+
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, oldItems, newItems));
         }
     }
 }

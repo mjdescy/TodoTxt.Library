@@ -50,12 +50,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TaskListWithMetadata_UnitTests.cs" />
     <Compile Include="Task_UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskList_UnitTests.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TodoTxtTestFile01.txt" />
+    <Compile Include="ItemsChangedObservableCollection_UnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TodoTxtWin.Library\TodoTxtWin.Library.csproj">

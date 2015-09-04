@@ -353,6 +353,8 @@ namespace TodoTxtWin.Library
 
         public Task() : this(String.Empty, null, null) { }
 
+        public Task(Task task) : this(task.RawText, task.ID) { }
+
         #endregion
 
         #region INotifyPropertyChanged Handlers

@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -8,6 +8,25 @@ using System.Linq;
 
 namespace TodoTxtWin.Library
 {
+    public enum TaskListUpdateCommand
+    {
+        ToggleCompletion,
+        SetPriority,
+        IncreasePriority,
+        DecreasePriority,
+        RemovePriority,
+        SetDueDate,
+        IncrementDueDate,
+        DecrementDueDate,
+        RemoveDueDate,
+        SetThresholdDate,
+        IncrementThresholdDate,
+        DecrementThresholdDate,
+        RemoveThresholdDate,
+        AppendText,
+        PrependText
+    }
+
     /// <summary>
     /// A TaskList is an in-memory representation of a collection of Task objects, or lines from a todo.txt file.
     /// Typically a TaskList represents one todo.txt file.
@@ -103,15 +122,18 @@ namespace TodoTxtWin.Library
                 return;
             }
 
+            var appendedItems = new List<Task>(taskList.Count());
+
             foreach (Task task in taskList)
             {
                 task.ID = this.Count + 1;
                 this.Items.Add(task);
+                appendedItems.Add(task);
             }
 
             this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
             this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, appendedItems));
         }
 
         #endregion
@@ -130,7 +152,8 @@ namespace TodoTxtWin.Library
                 this.Items.Remove(task);
             }
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, range.ToList()));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public void ReplaceAll(IEnumerable<Task> range)
@@ -138,6 +161,90 @@ namespace TodoTxtWin.Library
             this.Items.Clear();
 
             Append(range);
+        }
+
+        #endregion
+
+        #region Update Methods
+
+        public void UpdateSelectedTasks(IList selectedItems, TaskListUpdateCommand command, dynamic parameter = null)
+        {
+            if (selectedItems == null) throw new ArgumentNullException("selectedItems");
+
+            // capture indexes within the actual task list that should be modified
+            var indexesToModify = new List<int>(selectedItems.Count);
+            for (int i = 0; i < selectedItems.Count; i++)
+            {
+                int index = this.IndexOf((Task)selectedItems[i]);
+                if (index != -1)
+                {
+                    indexesToModify.Add(index);
+                }
+            }
+
+            // modify the actual task list via IList replacement by index
+            for (int i = 0; i < indexesToModify.Count; i++)
+            {
+                var newTask = new Task(this[indexesToModify[i]]);
+                switch (command)
+                {
+                    case TaskListUpdateCommand.ToggleCompletion:
+                        newTask.ToggleCompletion();
+                        break;
+                    case TaskListUpdateCommand.IncreasePriority:
+                        newTask.IncreasePriority();
+                        break;
+                    case TaskListUpdateCommand.DecreasePriority:
+                        newTask.DecreasePriority();
+                        break;
+                    case TaskListUpdateCommand.RemovePriority:
+                        newTask.RemovePriority();
+                        break;
+                    case TaskListUpdateCommand.SetPriority:
+                        newTask.SetPriority((char)parameter);
+                        break;
+                    case TaskListUpdateCommand.IncrementDueDate:
+                        newTask.IncrementDueDate(1);
+                        break;
+                    case TaskListUpdateCommand.DecrementDueDate:
+                        newTask.DecrementDueDate(1);
+                        break;
+                    case TaskListUpdateCommand.RemoveDueDate:
+                        newTask.RemoveDueDate();
+                        break;
+                    case TaskListUpdateCommand.SetDueDate:
+                        newTask.SetDueDate(parameter);
+                        break;
+                    case TaskListUpdateCommand.IncrementThresholdDate:
+                        newTask.IncrementThresholdDate(1);
+                        break;
+                    case TaskListUpdateCommand.DecrementThresholdDate:
+                        newTask.DecrementThresholdDate(1);
+                        break;
+                    case TaskListUpdateCommand.RemoveThresholdDate:
+                        newTask.RemoveThresholdDate();
+                        break;
+                    case TaskListUpdateCommand.SetThresholdDate:
+                        newTask.SetThresholdDate(parameter);
+                        break;
+                    case TaskListUpdateCommand.PrependText:
+                        newTask.PrependText(parameter);
+                        break;
+                    case TaskListUpdateCommand.AppendText:
+                        newTask.AppendText(parameter);
+                        break;
+                    default:
+                        break;
+                }
+                this[indexesToModify[i]] = newTask;
+            }
+
+            // modify the selectedItems list to update the tasks selected
+            selectedItems.Clear();
+            for (int i = 0; i < indexesToModify.Count; i++)
+            {
+                selectedItems.Add(this[indexesToModify[i]]);
+            }
         }
 
         #endregion
@@ -172,50 +279,20 @@ namespace TodoTxtWin.Library
 
         #endregion
 
-        #region OnCollectionChanged and OnItemPropertyChanged Event Handlers
+        #region Event Handlers
 
         protected override void item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "RawText")
+            if (e.PropertyName == "RawText" || e.PropertyName == "ID")
             {
-                base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
         }
 
-        //protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        //{
-        //    base.OnCollectionChanged(e);
-
-        //    if (e.NewItems != null)
-        //    {
-        //        foreach (Task newItem in e.NewItems)
-        //        {
-        //            // Add listener for each item on PropertyChanged event.
-        //            newItem.PropertyChanged += this.OnItemPropertyChanged;
-        //        }
-        //    }
-
-        //    if (e.OldItems != null)
-        //    {
-        //        foreach (Task oldItem in e.OldItems)
-        //        {
-        //            oldItem.PropertyChanged -= this.OnItemPropertyChanged;
-        //        }
-        //    }
-        //}
-
-        //protected virtual void item_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        //{
-        //    //this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace))
-        //}
-
-        //protected override void SetItem(int index, Task item)
-        //{
-        //    var oldItem = this[index];
-        //    oldItem.PropertyChanged -= OnItemPropertyChanged;
-        //    base.SetItem(index, item);
-        //    item.PropertyChanged += OnItemPropertyChanged;
-        //}
+        public static implicit operator TaskList(List<Task> v)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
     }
