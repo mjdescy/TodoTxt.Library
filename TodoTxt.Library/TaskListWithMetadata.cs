@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TodoTxtWin.Library
+namespace TodoTxt.Library
 {
     public class TaskListWithMetadata : TaskList
     {

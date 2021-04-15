@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>Michael Descy</Authors>
+    <Description>TodoTxt.Library provides a todo.txt format-compliant object representation of tasks, task lists, and task list files.</Description>
+    <Copyright>2015-2021 Michael Descy</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/mjdescy/TodoTxt.Library</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mjdescy/TodoTxt.Library</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>todo.txt to-do todo task list tasklist file</PackageTags>
+    <PackageReleaseNotes># Version 1.0.0
+
+Initial NuGet package release.</PackageReleaseNotes>
+  </PropertyGroup>
+
+</Project>

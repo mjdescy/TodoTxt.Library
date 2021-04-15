@@ -6,7 +6,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 
 
-namespace TodoTxtWin.Library
+namespace TodoTxt.Library
 {
     /// <summary>
     ///     This class adds the ability to refresh the list when any property of

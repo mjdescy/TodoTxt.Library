@@ -1,4 +1,4 @@
-# TodoTxtWin
+# TodoTxt.Library
 
 ## Purpose
 
@@ -12,6 +12,7 @@ Provide a todo.txt format-compliant object representation of tasks and task list
 4. Optimize classes for performance rather than in-memory footprint.
 5. Fully support data bindings, including sending notifications of property changes.
 6. Include exhaustive unit tests of the Task and TaskList objects.
+7. Target the .NET 5 for cross-platform support
 
 ## Design Decisions
 

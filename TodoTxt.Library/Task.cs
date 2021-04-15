@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace TodoTxtWin.Library
+namespace TodoTxt.Library
 {
     /// <summary>
     /// A Task is an in-memory representation of a single task, which is one line from a todo.txt file.

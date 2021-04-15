@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 
-namespace TodoTxtWin.Library
+namespace TodoTxt.Library
 {
     /// <summary>
     /// A FileBasedTaskList is a TaskList with methods for saving to a text file and monitoring the file for changes. 

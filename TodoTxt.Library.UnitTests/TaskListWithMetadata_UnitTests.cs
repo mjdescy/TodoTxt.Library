@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TodoTxtWin.Library;
+using TodoTxt.Library;
 
-namespace TodoTxtWin.Library.UnitTests
+namespace TodoTxt.Library.UnitTests
 {
     [TestClass]
     class TaskListWithMetadata_UnitTests

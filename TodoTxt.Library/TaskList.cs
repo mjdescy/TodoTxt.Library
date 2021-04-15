@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-namespace TodoTxtWin.Library
+namespace TodoTxt.Library
 {
     public enum TaskListUpdateCommand
     {

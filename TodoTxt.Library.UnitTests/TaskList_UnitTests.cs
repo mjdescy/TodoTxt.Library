@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TodoTxtWin.Library.UnitTests
+namespace TodoTxt.Library.UnitTests
 {
     [TestClass]
     public class TaskList_UnitTests

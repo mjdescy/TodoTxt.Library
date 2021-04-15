@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TodoTxtWin.Library;
+using TodoTxt.Library;
 
-namespace TodoTxtWin.Library.UnitTests
+namespace TodoTxt.Library.UnitTests
 {
     [TestClass]
     public class Task_UnitTests
